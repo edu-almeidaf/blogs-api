@@ -28,17 +28,21 @@ const login = async (req, res) => {
 };
 
 const signup = async (req, res) => {
-  const newUser = await UserService.createUser(req.body);
-
-if (newUser.status) {
-  return res.status(newUser.status).json(newUser.data);
-}
-
-const { password: _password, ...payload } = newUser.dataValues;
-
-const token = generateToken(payload);
-
-return res.status(201).json({ token });
+  try {
+    const newUser = await UserService.createUser(req.body);
+  
+    if (newUser.status) {
+      return res.status(newUser.status).json(newUser.data);
+    }
+  
+    const { password: _password, ...payload } = newUser.dataValues;
+  
+    const token = generateToken(payload);
+  
+    return res.status(201).json({ token });
+  } catch (error) {
+    return res.status(500).json({ message: 'Unexpected error', error: error.message });
+  }
 };
 
 module.exports = {
