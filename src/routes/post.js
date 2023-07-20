@@ -12,4 +12,5 @@ route.post(
 );
 
 route.get('/post', validateJWT, postController.getPosts);
+route.get('/post/:id', validateJWT, postController.getPostById);
 module.exports = route;
