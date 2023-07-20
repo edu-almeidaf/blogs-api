@@ -1,4 +1,4 @@
-const { BlogPost, PostCategory, Category, sequelize } = require('../models');
+const { BlogPost, PostCategory, Category, User, sequelize } = require('../models');
 
 const createPost = async ({ id, title, content, categoryIds }) => {
   const isCategoryExists = await Category.findAll({ where: { id: categoryIds } });
@@ -16,7 +16,6 @@ const createPost = async ({ id, title, content, categoryIds }) => {
       return newPost;
     });
     
-    console.log(operations);
     const newPost = await BlogPost.findByPk(operations.id);
     return { status: 201, data: newPost };
   } catch (error) {
@@ -24,6 +23,24 @@ const createPost = async ({ id, title, content, categoryIds }) => {
   }
 };
 
+const getPosts = async () => BlogPost.findAll({
+  include: [
+    {
+      model: User,
+      as: 'user',
+      attributes: { exclude: ['password'] },
+    },
+    {
+      model: Category,
+      as: 'categories',
+      through: {
+        attributes: { exclude: ['postId', 'categoryId'] },
+      },
+    },
+  ],
+});
+
 module.exports = {
   createPost,
+  getPosts,
 };

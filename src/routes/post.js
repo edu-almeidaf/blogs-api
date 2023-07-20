@@ -10,4 +10,6 @@ route.post(
   validateJWT,
   postController.createPost,
 );
+
+route.get('/post', validateJWT, postController.getPosts);
 module.exports = route;

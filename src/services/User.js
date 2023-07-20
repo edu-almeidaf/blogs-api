@@ -23,7 +23,6 @@ const createUser = async (data) => {
   }
 
   const isEmailRegistered = await getUserByEmail(data.email);
-  console.log(isEmailRegistered);
   if (isEmailRegistered) {
     return { status: 409, data: { message: 'User already registered' } };
   }
