@@ -60,10 +60,7 @@ const getPostById = async (id) => {
 };
 
 const updatePost = async ({ userId, id, title, content }) => {
-  console.log('service');
   const oldPost = await BlogPost.findByPk(id);
-  console.log('Oldpost:', oldPost.userId);
-  console.log('UserId:', userId);
 
   if (oldPost.userId !== userId) {
     return { status: 401, data: { message: 'Unauthorized user' } };
@@ -84,9 +81,31 @@ const updatePost = async ({ userId, id, title, content }) => {
   }
 };
 
+const deletePost = async ({ userId, id }) => {
+  const post = await BlogPost.findByPk(id);
+
+  if (!post) {
+    return { status: 404, data: { message: 'Post does not exist' } };
+  }
+  if (post.userId !== userId) {
+    return { status: 401, data: { message: 'Unauthorized user' } };
+  }
+
+  try {
+    await sequelize.transaction(async (t) => {
+      await BlogPost.destroy({ where: { id }, transaction: t });
+    });
+    
+    return { status: 204, data: 'success' };
+  } catch (error) {
+    return { status: 500, data: error };
+  }
+};
+
 module.exports = {
   createPost,
   getPosts,
   getPostById,
   updatePost,
+  deletePost,
 };

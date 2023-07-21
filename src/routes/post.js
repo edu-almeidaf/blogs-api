@@ -20,4 +20,9 @@ route.put(
   validateJWT,
   postController.updatePost,
 );
+route.delete(
+  '/post/:id',
+  validateJWT,
+  postController.deletePost,
+);
 module.exports = route;
