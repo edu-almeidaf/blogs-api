@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, sequelize } = require('../models');
 const { validateNewUser } = require('./validations/userValidations');
 
 const getAllUsers = async () => {
@@ -32,9 +32,22 @@ const createUser = async (data) => {
   return newUser;
 };
 
+const deleteUser = async (id) => {
+  try {
+    await sequelize.transaction(async (t) => {
+      await User.destroy({ where: { id }, transaction: t });
+    });
+    
+    return { status: 204, data: 'success' };
+  } catch (error) {
+    return { status: 500, data: error };
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserByEmail,
   getUserById,
   createUser,
+  deleteUser,
 };
