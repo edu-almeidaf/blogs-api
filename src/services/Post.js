@@ -59,8 +59,34 @@ const getPostById = async (id) => {
   return { status: 200, data: post };
 };
 
+const updatePost = async ({ userId, id, title, content }) => {
+  console.log('service');
+  const oldPost = await BlogPost.findByPk(id);
+  console.log('Oldpost:', oldPost.userId);
+  console.log('UserId:', userId);
+
+  if (oldPost.userId !== userId) {
+    return { status: 401, data: { message: 'Unauthorized user' } };
+  }
+  
+  const newData = { title, content, updated: new Date() };
+
+  try {
+    await sequelize.transaction(async (t) => {
+      const updatedPost = await BlogPost.update(newData, { where: { id }, transaction: t });
+      return updatedPost;
+    });
+    
+    const { data } = await getPostById(id);
+    return { status: 200, data };
+  } catch (error) {
+    return { status: 500, data: error };
+  }
+};
+
 module.exports = {
   createPost,
   getPosts,
   getPostById,
+  updatePost,
 };
