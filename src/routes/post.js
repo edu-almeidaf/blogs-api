@@ -13,6 +13,7 @@ route.post(
 );
 
 route.get('/post', validateJWT, postController.getPosts);
+route.get('/post/search', validateJWT, postController.getPostsByQuery);
 route.get('/post/:id', validateJWT, postController.getPostById);
 route.put(
   '/post/:id',
